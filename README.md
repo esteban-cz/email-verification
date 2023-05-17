@@ -7,7 +7,6 @@
 
 ## <br> 3. Setup the enviroment variables
 You need to do this or else the app wont work !!!
-``` This step is important, because without editing the .env file the application won't work !! ```
 ### Look for the .env file and edit it as tou want (with any IDE or just open it in notepad) 
 
 ## <br> 4. Start the app
