@@ -21,6 +21,15 @@ async function checkEmailDomain(email) {
   });
 }
 
+function generateRandomString(length) {
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let result = '';
+  for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * characters.length));
+  }
+  return result;
+}
+
 router.post('/send_email', async (req, res) => {
   storedVerificationCode = (Math.floor(Math.random() * 900000) + 100000).toString().replace(/(\d{3})(\d{3})/, "$1-$2");
   
@@ -130,8 +139,11 @@ router.post('/verify', async (req, res) => {
       };
     
       const verifiedAt = new Date().toLocaleString('en-GB', pragueTimezoneOptions);
-    
+      
+      const uniqueId = generateRandomString(16);
+      
       const user = {
+        _id: `${surname.toLowerCase()}-${uniqueId.toLowerCase()}`,
         name: name,
         surname: surname,
         email: email,
