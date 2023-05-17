@@ -4,8 +4,6 @@ const emailRoutes = require('./routes/emailRoutes');
 const bodyParser = require('body-parser');
 const port = 3000;
 
-console.log(`SEND_CONFIRMATION_MAIL is set to ${process.env.SEND_CONFIRMATION_MAIL}`)
-
 app.use(express.static(__dirname + '/public'));
 
 app.use(bodyParser.urlencoded({ extended: false }));
