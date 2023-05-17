@@ -24,13 +24,9 @@ async function checkEmailDomain(email) {
 router.post('/send_email', async (req, res) => {
   storedVerificationCode = (Math.floor(Math.random() * 900000) + 100000).toString().replace(/(\d{3})(\d{3})/, "$1-$2");
   
-  title_before = req.body.title_before;
   name = req.body.name;
   surname = req.body.surname;
-  title_after = req.body.title_after;
-  icp = req.body.icp;
   email = req.body.email;
-  phone = req.body.phone;
 
   try {
     const client = new MongoClient(process.env.MONGODB_URI);
@@ -44,7 +40,7 @@ router.post('/send_email', async (req, res) => {
 
     if (userExists) {
       await client.close();
-      return res.status(400).send('Email je již verifikován');
+      return res.status(400).send('Email already verified');
     }
 
     const domainExists = await checkEmailDomain(email);
@@ -61,7 +57,7 @@ router.post('/send_email', async (req, res) => {
       const mailOptions = {
         from: process.env.EMAIL_FROM,
         to: email,
-        subject: `Ověřovací kód: ${storedVerificationCode}`,
+        subject: `Verification code: ${storedVerificationCode}`,
         html: `
         <!DOCTYPE html>
         <html>
@@ -82,8 +78,8 @@ router.post('/send_email', async (req, res) => {
             </style>
           </head>
           <body>
-            <p>Dobrý den ${name} ${surname},</p>
-            <p>Váš verifikační kód je:</p>
+            <p>Hello ${name} ${surname},</p>
+            <p>Your verification code is:</p>
             <div class="code">
               <strong>${storedVerificationCode}</strong>
             </div>
@@ -94,18 +90,18 @@ router.post('/send_email', async (req, res) => {
       transporter.sendMail(mailOptions, function(error, info) {
         if (error) {
           console.log(error);
-          res.status(500).send('Email se nepodařilo odeslat');
+          res.status(500).send("Email wasn't sent");
         } else {
-          res.status(200).send('Email odeslán 🎉');
+          res.status(200).send('Email sent 🎉');
         }
       });
     } else {
-      res.status(500).send('Doména neexistuje');
+      res.status(500).send("Email domain doesn't exist");
     }
     await client.close();
   } catch (error) {
-    console.error('Chyba při komunikaci s databází:', error);
-    return res.status(501).send('Chyba při komunikaci s databází');
+    console.error('Error with communicating to database:', error);
+    return res.status(501).send('Error with communicating to database');
   }
 });
 
@@ -121,7 +117,8 @@ router.post('/verify', async (req, res) => {
       await client.connect();
       const database = client.db(process.env.DB_NAME);
       const collection = database.collection(process.env.DB_TABLE_NAME);
-
+      
+      // Your timezone
       const pragueTimezoneOptions = {
         timeZone: 'Europe/Prague',
         day: '2-digit',
@@ -135,33 +132,11 @@ router.post('/verify', async (req, res) => {
       const verifiedAt = new Date().toLocaleString('en-GB', pragueTimezoneOptions);
     
       const user = {
-        titul_pred_jmenem: "",
-        jmeno: name,
-        prijmeni: surname,
-        titul_za_jmenem: "",
-        icp: icp,
+        name: name,
+        surname: surname,
         email: email,
-        telefon: "",
-        cas_zaznamu: verifiedAt
+        verified_at: verifiedAt
       };
-        
-      if (title_before !== "") {
-        user.titul_pred_jmenem = title_before;
-      } else {
-        user.titul_pred_jmenem = 'Nevyplněno'
-      }
-      
-      if (title_after !== "") {
-        user.titul_za_jmenem = title_after;
-      } else {
-        user.titul_za_jmenem = 'Nevyplněno'
-      }
-      
-      if (phone !== "") {
-        user.telefon = phone;
-      } else {
-        user.telefon = 'Nevyplněno'
-      }
 
       await collection.insertOne(user);
 
@@ -183,15 +158,11 @@ router.post('/verify', async (req, res) => {
             </style>
           </head>
           <body>
-            <h2>Kopie dat uložených do databáze:</h2>
-            <p><strong>Titul před jménem: </strong>${user.titul_pred_jmenem}</p>
-            <p><strong>Jméno: </strong>${user.jmeno}</p>
-            <p><strong>Příjmení: </strong>${user.prijmeni}</p>
-            <p><strong>Titul za jménem: </strong>${user.titul_za_jmenem}</p>
-            <p><strong>IČP: </strong>${user.icp}</p>
+            <h2>Copy of saved data:</h2>
+            <p><strong>Name: </strong>${user.name}</p>
+            <p><strong>Surname: </strong>${user.surname}</p>
             <p><strong>Email: </strong>${user.email}</p>
-            <p><strong>Telefon: </strong>${user.telefon}</p>
-            <p><strong>Čas záznamu: </strong>${user.cas_zaznamu}</p>
+            <p><strong>Verified at: </strong>${user.verified_at}</p>
           </body>
         </html>`
       };
@@ -206,7 +177,7 @@ router.post('/verify', async (req, res) => {
         const mailOptions = {
           from: process.env.EMAIL_FROM,
           to: email,
-          subject: `Váš email je ověřen`,
+          subject: `Your email has been verified`,
           html: `
           <!DOCTYPE html>
           <html>
@@ -221,8 +192,8 @@ router.post('/verify', async (req, res) => {
               </style>
             </head>
             <body>
-              <p>Dobrý den ${name} ${surname},</p>
-              <p>Váš email byl právě verifikován.</p>               
+              <p>Hello ${name} ${surname},</p>
+              <p>your email has been verified.</p>               
             </body>
           </html>`
         };
@@ -234,16 +205,16 @@ router.post('/verify', async (req, res) => {
         });
       }
 
-      res.status(200).send('Ověřeno');
+      res.status(200).send('Verified');
       storedVerificationCode = null;
     } catch (error) {
-      console.error('Chyba při ukládání uživatelských informací:', error);
-      res.status(500).send('Chyba při ukládání uživatelských informací');
+      console.error('Error while saving user data:', error);
+      res.status(500).send('Error while saving user data');
     } finally {
       await client.close();
     }
   } else {
-    res.status(400).send('Špatný kód');
+    res.status(400).send('Wrong code');
   }
 });
 
