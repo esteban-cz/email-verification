@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Ověření emailu</title>
+  <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+        <h2>Ověřte si svůj mail</h2>
+    </div>
+    <form class="form" id="form">
+      <div class="form-control">
+        <label for="">Titul před jménem:</label>
+        <input type="text" placeholder="Mgr., MUDr., JUDr., atd..." id="title-before">
+      </div>
+      <div class="form-control">
+        <small><label for="">*</label></small>
+        <label for="">Jméno:</label>
+        <input type="text" placeholder="Jan" id="name" required>
+      </div>
+      <div class="form-control">
+        <small><label for="">*</label></small>
+        <label for="">Příjmení:</label>
+        <input type="text" placeholder="Novák" id="surname" required>
+      </div>
+      <div class="form-control">
+        <label for="">Titul za jménem:</label>
+        <input type="text" placeholder="DiS., MBA, LL., atd..." id="title-after">
+      </div>
+      <div class="form-control">
+        <small><label for="">*</label></small>
+        <label for="">IČP:</label>
+        <input type="text" placeholder="Identifikační číslo poskytovatele zdravotních služeb" id="icp" required>
+      </div>
+      <div class="form-control">
+        <small><label for="">*</label></small>
+        <label for="">Email:</label>
+        <input type="email" placeholder="novak.jan@email.com" id="email" required>
+      </div>
+      <div class="form-control">
+        <label for="">Telefon:</label>
+        <input type="text" placeholder="111 222 333" id="phone">
+      </div>
+      <button type="submit">Odeslat ověřovací kód</button>
+    </form>
+    <div class="message hidden header">
+      <p>message</p>
+    </div>
+    <form class="form hidden" id="form-verify">
+      <div class="form-control">
+        <label for="" style="font-size: medium;">Zadejte váš ověřovací kód:</label>
+        <input type="text" placeholder="000-000" id="verificationCode" required>
+      </div>
+      <button type="submit">Ověřit kód</button>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById('form').addEventListener('submit', function(event) {
+      event.preventDefault();
+      
+      var title_before = document.getElementById('title-before').value;
+      var name = document.getElementById('name').value;
+      var surname = document.getElementById('surname').value;
+      var title_after = document.getElementById('title-after').value;
+      var icp = document.getElementById('icp').value;
+      var email = document.getElementById('email').value;
+      var phone = document.getElementById('phone').value;
+      const form = document.getElementById("form");
+      const form_verify = document.getElementById("form-verify")
+      const header = document.querySelector(".header");
+      const button = document.querySelector("button");
+      const message = document.querySelector(".message");
+      var success_message = document.querySelector('.message.hidden');
+      var verificationCode = document.getElementById('verificationCode').value;
+
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', '/email/send_email', true);
+      xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4) {
+          if (xhr.status === 200) {
+            success_message.innerHTML = xhr.responseText;
+            header.classList.add("hidden");
+            form.classList.add("hidden");
+            message.classList.remove("hidden");
+            form_verify.classList.remove("hidden");
+            ani();
+          } else {
+            if (xhr.handled !== true) {
+              if (xhr.status === 500) {
+                alert('Zadali jste neexistující emailovou adresu.');
+                xhr.handled = true;
+              }
+              if (xhr.status === 400) {
+                alert('Email je již verifikován.');
+                xhr.handled = true;
+              }
+            }
+          }
+        }
+      };
+      xhr.send(
+        'title_before=' + encodeURIComponent(title_before) +
+        '&name=' + encodeURIComponent(name) +
+        '&surname=' + encodeURIComponent(surname) +
+        '&title_after=' + encodeURIComponent(title_after) +
+        '&icp=' + encodeURIComponent(icp) +
+        '&email=' + encodeURIComponent(email) +
+        '&phone=' + encodeURIComponent(phone)
+      );
+    });
+    document.getElementById('form-verify').addEventListener('submit', function(event) {
+      event.preventDefault();
+
+      var verificationCode = document.getElementById('verificationCode').value;
+
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', '/email/verify', true);
+      xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4) {
+          if (xhr.status === 200) {
+            // window.location.href = '/finish.html';
+            window.location.reload()
+          } else {
+            alert('Zadali jste špatný ověřovací kód.');
+          }
+        }
+      };
+      xhr.send('verificationCode=' + encodeURIComponent(verificationCode));
+    });
+
+  </script>
+</body>
+</html>
