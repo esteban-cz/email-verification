@@ -6,7 +6,7 @@
 ### After you download, extract the email-verification-master folder
 
 ## <br> 3. Setup the enviroment variables
-### ``` This step is important, because without editing the .env file the application won't work !! ```
+###``` This step is important, because without editing the .env file the application won't work !! ```
 ### Look for the .env file and edit it as tou want (with any IDE or just open it in notepad) 
 
 ## <br> 4. Start the app
