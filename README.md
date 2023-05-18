@@ -5,5 +5,5 @@
 ## <br> 2. Download the .ZIP
 ### After you download, extract the email-verification-master folder
 
-## <br> 3. Now just run the server
+## <br> 3. Now just start the server
 
