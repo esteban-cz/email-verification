@@ -1,6 +1,6 @@
 @echo off
 node -v >nul 2>&1
-if %errorlevel% equ 0 (
+if %errorlevel% neq 0 (
     echo Node.js is not installed, installing now...
     timeout /t 5 >nul
     start https://nodejs.org/dist/v18.16.0/node-v18.16.0-x64.msi    
