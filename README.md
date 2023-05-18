@@ -8,7 +8,7 @@
   [![MIT License](https://img.shields.io/badge/License-MIT-red.svg?style=for-the-badge)](https://choosealicense.com/licenses/mit/)&nbsp;&nbsp;&nbsp;
   ![Maintenance](https://img.shields.io/maintenance/yes/2023?style=for-the-badge)&nbsp;&nbsp;&nbsp;
   ![GitHub last commit](https://img.shields.io/github/last-commit/esteban-cz/email-verification?style=for-the-badge)&nbsp;&nbsp;&nbsp;
-  [![GitHub all releases](https://img.shields.io/github/downloads/esteban-cz/email-verification/total?style=for-the-badge)]()
+  [![GitHub all releases](https://img.shields.io/github/downloads/esteban-cz/email-verification/total?style=for-the-badge)](https://github.com/esteban-cz/email-verification/releases/tag/v1.0.0)
   
 </sub><br>
 <img width="0" height="0">
