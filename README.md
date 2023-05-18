@@ -1,3 +1,6 @@
+# Email verification
+## This app is just a snippet that has a form created in html and it has just some basic css styling. After user enter his name, surname and email he will get an email with verification code and than the user enters the verification code and if the verification code is succesfull heis data will be save to mongodb database.
+
 # How to run locally:
 ``` I created batch files for simplicity of setting up and starting the server ``` <br>
 ``` You can basically set up and run this app without any knowledge of coding :) ```
