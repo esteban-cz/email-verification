@@ -1,10 +1,12 @@
 {
   "dependencies": {
     "body-parser": "^1.20.2",
+    "dns": "^0.2.2",
     "dotenv": "^16.0.3",
     "ejs": "^3.1.9",
     "express": "^4.18.2",
     "express-session": "^1.17.3",
+    "format": "^0.2.2",
     "lodash.deburr": "^4.1.0",
     "mongodb": "^5.5.0",
     "nodemailer": "^6.9.2",
@@ -12,5 +14,28 @@
   },
   "nodemonConfig": {
     "ext": "js,html,css,json,env"
-  }
+  },
+  "scripts": {
+    "start": "nodemon src/server.js",
+    "format": "prettier --write \"**/*.{js,jsx,json,md}\"",
+    "format-watch": "npm run format && onchange \"**/*.{js,jsx,json,md}\" -- prettier --write {{changed}}"
+  },
+  "name": "email-verification",
+  "version": "1.0.0",
+  "description": "Email verification created in Node.js, Express.js and MongoDB",
+  "main": "server.js",
+  "devDependencies": {
+    "onchange": "^7.0.2",
+    "prettier": "^2.8.8"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/esteban-cz/email-verification.git"
+  },
+  "author": "Stepan Tomecka",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/esteban-cz/email-verification/issues"
+  },
+  "homepage": "https://github.com/esteban-cz/email-verification#readme"
 }

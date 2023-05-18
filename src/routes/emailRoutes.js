@@ -1,15 +1,15 @@
-require('dotenv').config();
-const dns = require('dns');
-const express = require('express');
+require("dotenv").config();
+const dns = require("dns");
+const express = require("express");
 const router = express.Router();
-const nodemailer = require('nodemailer');
-const { MongoClient } = require('mongodb');
-const { resolve } = require('path');
-var deburr = require('lodash.deburr');
+const nodemailer = require("nodemailer");
+const { MongoClient } = require("mongodb");
+const { resolve } = require("path");
+var deburr = require("lodash.deburr");
 let storedVerificationCode;
 
 async function checkEmailDomain(email) {
-  domain = email.split('@')[1];
+  domain = email.split("@")[1];
 
   return new Promise((resolve) => {
     dns.resolveMx(domain, (error, addresses) => {
@@ -23,17 +23,20 @@ async function checkEmailDomain(email) {
 }
 
 function generateRandomString(length) {
-  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let result = '';
+  const characters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let result = "";
   for (let i = 0; i < length; i++) {
     result += characters.charAt(Math.floor(Math.random() * characters.length));
   }
   return result;
 }
 
-router.post('/send_email', async (req, res) => {
-  storedVerificationCode = (Math.floor(Math.random() * 900000) + 100000).toString().replace(/(\d{3})(\d{3})/, "$1-$2");
-  
+router.post("/send_email", async (req, res) => {
+  storedVerificationCode = (Math.floor(Math.random() * 900000) + 100000)
+    .toString()
+    .replace(/(\d{3})(\d{3})/, "$1-$2");
+
   name = req.body.name;
   surname = req.body.surname;
   email = req.body.email;
@@ -50,18 +53,17 @@ router.post('/send_email', async (req, res) => {
 
     if (userExists) {
       await client.close();
-      return res.status(400).send('Email already verified');
+      return res.status(400).send("Email already verified");
     }
 
     const domainExists = await checkEmailDomain(email);
     if (domainExists) {
-
       transporter = nodemailer.createTransport({
         service: process.env.EMAIL_SERVICE,
         auth: {
           user: process.env.EMAIL_USERNAME,
-          pass: process.env.EMAIL_PASSWORD
-        }
+          pass: process.env.EMAIL_PASSWORD,
+        },
       });
 
       const mailOptions = {
@@ -94,15 +96,15 @@ router.post('/send_email', async (req, res) => {
               <strong>${storedVerificationCode}</strong>
             </div>
           </body>
-        </html>`
+        </html>`,
       };
 
-      transporter.sendMail(mailOptions, function(error, info) {
+      transporter.sendMail(mailOptions, function (error, info) {
         if (error) {
           console.log(error);
           res.status(500).send("Email wasn't sent");
         } else {
-          res.status(200).send('Email sent 🎉');
+          res.status(200).send("Email sent 🎉");
         }
       });
     } else {
@@ -110,16 +112,15 @@ router.post('/send_email', async (req, res) => {
     }
     await client.close();
   } catch (error) {
-    console.error('Error with communicating to database:', error);
-    return res.status(501).send('Error with communicating to database');
+    console.error("Error with communicating to database:", error);
+    return res.status(501).send("Error with communicating to database");
   }
 });
 
-router.post('/verify', async (req, res) => {
+router.post("/verify", async (req, res) => {
   const verificationCode = req.body.verificationCode;
 
   if (verificationCode === storedVerificationCode) {
-
     const uri = process.env.MONGODB_URI;
     const client = new MongoClient(uri);
 
@@ -127,30 +128,33 @@ router.post('/verify', async (req, res) => {
       await client.connect();
       const database = client.db(process.env.DB_NAME);
       const collection = database.collection(process.env.DB_TABLE_NAME);
-      
+
       // Your timezone
       const pragueTimezoneOptions = {
-        timeZone: 'Europe/Prague',
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: false
+        timeZone: "Europe/Prague",
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
       };
-    
-      const verifiedAt = new Date().toLocaleString('en-GB', pragueTimezoneOptions);
-      
+
+      const verifiedAt = new Date().toLocaleString(
+        "en-GB",
+        pragueTimezoneOptions
+      );
+
       const uniqueId = generateRandomString(16);
 
       const surname_raw = deburr(surname);
-      
+
       const user = {
         _id: `${surname_raw.toLowerCase()}-${uniqueId.toLowerCase()}`,
         name: name,
         surname: surname,
         email: email,
-        verified_at: verifiedAt
+        verified_at: verifiedAt,
       };
 
       await collection.insertOne(user);
@@ -179,10 +183,10 @@ router.post('/verify', async (req, res) => {
             <p><strong>Email: </strong>${user.email}</p>
             <p><strong>Verified at: </strong>${user.verified_at}</p>
           </body>
-        </html>`
+        </html>`,
       };
-  
-      transporter.sendMail(mailOptions, function(error, info) {
+
+      transporter.sendMail(mailOptions, function (error, info) {
         if (error) {
           console.log(error);
         }
@@ -210,26 +214,26 @@ router.post('/verify', async (req, res) => {
               <p>Hello ${name} ${surname},</p>
               <p>your email has been verified.</p>               
             </body>
-          </html>`
+          </html>`,
         };
-    
-        transporter.sendMail(mailOptions, function(error, info) {
+
+        transporter.sendMail(mailOptions, function (error, info) {
           if (error) {
             console.log(error);
           }
         });
       }
 
-      res.status(200).send('Verified');
+      res.status(200).send("Verified");
       storedVerificationCode = null;
     } catch (error) {
-      console.error('Error while saving user data:', error);
-      res.status(500).send('Error while saving user data');
+      console.error("Error while saving user data:", error);
+      res.status(500).send("Error while saving user data");
     } finally {
       await client.close();
     }
   } else {
-    res.status(400).send('Wrong code');
+    res.status(400).send("Wrong code");
   }
 });
 

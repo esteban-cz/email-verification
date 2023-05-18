@@ -1,17 +1,17 @@
-const express = require('express');
+const express = require("express");
 const app = express();
-const emailRoutes = require('./routes/emailRoutes');
-const bodyParser = require('body-parser');
+const emailRoutes = require("./routes/emailRoutes");
+const bodyParser = require("body-parser");
 const port = 3000;
 
-app.use(express.static(__dirname + '/public'));
+app.use(express.static(__dirname + "/public"));
 
 app.use(bodyParser.urlencoded({ extended: false }));
 
-app.use('/email', emailRoutes);
+app.use("/email", emailRoutes);
 
-app.use(function(req, res, next) {
-  res.status(404).sendFile(__dirname + '/public/404/404.html');
+app.use(function (req, res, next) {
+  res.status(404).sendFile(__dirname + "/public/404/404.html");
 });
 
 app.listen(port, () => {
