@@ -5,7 +5,16 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon server.js"
+    "start": "nodemon server.js",
+    "format": "prettier --write \"**/*.{js,jsx,json,md}\"",
+    "format-watch": "npm run format && onchange \"**/*.{js,jsx,json,md}\" -- prettier --write {{changed}}"
+  },
+  "nodemonConfig": {
+    "ext": "js,html,css,json,env"
+  },
+  "devDependencies": {
+    "onchange": "^7.0.2",
+    "prettier": "^2.8.8"
   },
   "repository": {
     "type": "git",
