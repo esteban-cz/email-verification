@@ -39,7 +39,7 @@ After you download it, extract the email-verification-master folder somewhere
 ### Now you can just start the `Start the server.bat`
 
 This will navigate you through settings needed for the app
-After the setup is done it will automatically start the server :)
+After the setup is done it will automatically start the server
 
 <br>
 
