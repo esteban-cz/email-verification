@@ -13,6 +13,13 @@ if %errorlevel% neq 0 (
     exit
 )
 
+set /p "choice=Run config? (y/n): "
+if /i "%choice%"=="y" (
+    cls
+    call config.bat
+    cls
+)
+
 call nodemon -v >nul 2>&1
 if %errorlevel% neq 0 (
     echo npm and Node.js are installed, starting the server...
@@ -23,7 +30,6 @@ if %errorlevel% neq 0 (
     cls
     echo Press CTRL + C to stop the server at any time
     call node server.js
-
     pause
     exit
 )
