@@ -5,6 +5,7 @@
     "ejs": "^3.1.9",
     "express": "^4.18.2",
     "express-session": "^1.17.3",
+    "lodash.deburr": "^4.1.0",
     "mongodb": "^5.5.0",
     "nodemailer": "^6.9.2",
     "nodemon": "^2.0.22"

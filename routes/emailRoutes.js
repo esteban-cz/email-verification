@@ -5,6 +5,7 @@ const router = express.Router();
 const nodemailer = require('nodemailer');
 const { MongoClient } = require('mongodb');
 const { resolve } = require('path');
+var deburr = require('lodash.deburr');
 let storedVerificationCode;
 
 async function checkEmailDomain(email) {
@@ -141,9 +142,11 @@ router.post('/verify', async (req, res) => {
       const verifiedAt = new Date().toLocaleString('en-GB', pragueTimezoneOptions);
       
       const uniqueId = generateRandomString(16);
+
+      const surname_raw = deburr(surname);
       
       const user = {
-        _id: `${surname.toLowerCase()}-${uniqueId.toLowerCase()}`,
+        _id: `${surname_raw.toLowerCase()}-${uniqueId.toLowerCase()}`,
         name: name,
         surname: surname,
         email: email,
