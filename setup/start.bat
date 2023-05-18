@@ -20,6 +20,8 @@ if /i "%choice%"=="y" (
     cls
 )
 
+cls
+
 call nodemon -v >nul 2>&1
 if %errorlevel% neq 0 (
     echo npm and Node.js are installed, starting the server...
@@ -29,6 +31,8 @@ if %errorlevel% neq 0 (
     timeout /t 2 >nul
     cls
     echo Press CTRL + C to stop the server at any time
+    cd ..
+    cd src
     call node server.js
     pause
     exit
@@ -40,6 +44,8 @@ cls
 
 
 echo Press CTRL + C to stop the server at any time
+cd ..
+cd src
 call nodemon server.js
 
 pause

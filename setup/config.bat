@@ -1,6 +1,6 @@
 @echo off
 
-set "envFile=.env"
+set "envFile=..\src\.env"
 set "tempFile=%temp%\env.tmp"
 
 REM Display the current contents of the .env file
