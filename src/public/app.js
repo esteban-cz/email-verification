@@ -39,33 +39,28 @@ document.getElementById("form").addEventListener("submit", function (event) {
     }
   };
   xhr.send(
-    "name=" +
-      encodeURIComponent(name) +
-      "&surname=" +
-      encodeURIComponent(surname) +
-      "&email=" +
-      encodeURIComponent(email)
+    "name=" + encodeURIComponent(name) +
+    "&surname=" + encodeURIComponent(surname) +
+    "&email=" + encodeURIComponent(email)
   );
 });
-document
-  .getElementById("form-verify")
-  .addEventListener("submit", function (event) {
-    event.preventDefault();
+document.getElementById("form-verify").addEventListener("submit", function (event) {
+  event.preventDefault();
 
-    var verificationCode = document.getElementById("verificationCode").value;
+  var verificationCode = document.getElementById("verificationCode").value;
 
-    var xhr = new XMLHttpRequest();
-    xhr.open("POST", "/email/verify", true);
-    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    xhr.onreadystatechange = function () {
-      if (xhr.readyState === 4) {
-        if (xhr.status === 200) {
-          // window.location.href = '/finish.html';
-          window.location.reload();
-        } else {
-          alert("Wrong verification code, try again");
-        }
+  var xhr = new XMLHttpRequest();
+  xhr.open("POST", "/email/verify", true);
+  xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState === 4) {
+      if (xhr.status === 200) {
+        // window.location.href = '/finish.html';
+        window.location.reload();
+      } else {
+        alert("Wrong verification code, try again");
       }
-    };
-    xhr.send("verificationCode=" + encodeURIComponent(verificationCode));
-  });
+    }
+  };
+  xhr.send("verificationCode=" + encodeURIComponent(verificationCode));
+});
