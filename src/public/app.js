@@ -1,3 +1,14 @@
+document.getElementById('verificationCode').addEventListener('input', function(event) {
+  const input = event.target;
+  let value = input.value.replace(/[^0-9]/g, '');
+
+  if (value.length > 3) {
+    value = value.slice(0, 3) + '-' + value.slice(3);
+  }
+
+  input.value = value;
+});
+
 document.getElementById("form").addEventListener("submit", function (event) {
   event.preventDefault();
 
@@ -7,10 +18,8 @@ document.getElementById("form").addEventListener("submit", function (event) {
   const form = document.getElementById("form");
   const form_verify = document.getElementById("form-verify");
   const header = document.querySelector(".header");
-  const button = document.querySelector("button");
   const message = document.querySelector(".message");
   var success_message = document.querySelector(".message.hidden");
-  var verificationCode = document.getElementById("verificationCode").value;
 
   var xhr = new XMLHttpRequest();
   xhr.open("POST", "/email/send_email", true);

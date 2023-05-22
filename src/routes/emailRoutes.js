@@ -158,39 +158,41 @@ router.post("/verify", async (req, res) => {
       };
 
       await collection.insertOne(user);
+      
+      if (process.env.SEND_LOG_MAIL === "1") {
+        const mailOptions = {
+          from: process.env.EMAIL_LOG_FROM,
+          to: process.env.EMAIL_LOG_TO,
+          subject: process.env.EMAIL_LOG_SUBJECT,
+          html: `
+          <!DOCTYPE html>
+          <html>
+            <head>
+              <style>
+                p {
+                  color: black;
+                }
+                h2 {
+                  color: black;
+                }
+              </style>
+            </head>
+            <body>
+              <h2>Copy of saved data:</h2>
+              <p><strong>Name: </strong>${user.name}</p>
+              <p><strong>Surname: </strong>${user.surname}</p>
+              <p><strong>Email: </strong>${user.email}</p>
+              <p><strong>Verified at: </strong>${user.verified_at}</p>
+            </body>
+          </html>`,
+        };
 
-      const mailOptions = {
-        from: process.env.EMAIL_LOG_FROM,
-        to: process.env.EMAIL_LOG_TO,
-        subject: process.env.EMAIL_LOG_SUBJECT,
-        html: `
-        <!DOCTYPE html>
-        <html>
-          <head>
-            <style>
-              p {
-                color: black;
-              }
-              h2 {
-                color: black;
-              }
-            </style>
-          </head>
-          <body>
-            <h2>Copy of saved data:</h2>
-            <p><strong>Name: </strong>${user.name}</p>
-            <p><strong>Surname: </strong>${user.surname}</p>
-            <p><strong>Email: </strong>${user.email}</p>
-            <p><strong>Verified at: </strong>${user.verified_at}</p>
-          </body>
-        </html>`,
-      };
-
-      transporter.sendMail(mailOptions, function (error, info) {
-        if (error) {
-          console.log(error);
-        }
-      });
+        transporter.sendMail(mailOptions, function (error, info) {
+          if (error) {
+            console.log(error);
+          }
+        });
+      }
 
       if (process.env.SEND_CONFIRMATION_MAIL === "1") {
         const mailOptions = {
