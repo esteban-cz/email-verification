@@ -14,17 +14,21 @@
       <div class="form-control">
         <small><label for="">*</label></small>
         <label for="">Name:</label>
-        <input type="text" placeholder="John" id="name" required>
+        <input type="text" placeholder="John" id="name" onclick="nameError()">
+        <small id="name-error" style="display: none;">&nbsp Name is required</small>
       </div>
       <div class="form-control">
         <small><label for="">*</label></small>
         <label for="">Surname:</label>
-        <input type="text" placeholder="Doe" id="surname" required>
+        <input type="text" placeholder="Doe" id="surname" onclick="surnameError()">
+        <small id="surname-error" style="display: none;">&nbsp Surname is required</small>
+
       </div>
       <div class="form-control">
         <small><label for="">*</label></small>
         <label for="">Email:</label>
-        <input type="email" placeholder="john.doe@email.com" id="email" required>
+        <input type="email" placeholder="john.doe@email.com" id="email" onclick="emailError()">
+        <small id="email-error" style="display: none;">&nbsp Email is required</small>
       </div>
       <button type="submit">Send verification code</button>
     </form>
@@ -34,7 +38,8 @@
     <form class="form hidden" id="form-verify">
       <div class="form-control">
         <label for="" style="font-size: medium;">Enter your verification code:</label>
-        <input type="text" placeholder="000-000" id="verificationCode" maxlength="7" required>
+        <input type="text" placeholder="000-000" id="verificationCode" maxlength="7" onclick="codeError()">
+        <small id="code-error" style="display: none;">&nbsp Verification code is required</small>
       </div>
       <button type="submit">Verify</button>
     </form>

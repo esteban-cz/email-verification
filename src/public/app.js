@@ -1,3 +1,19 @@
+function nameError() {
+  document.getElementById('name-error').style.display = 'none';
+}
+
+function surnameError() {
+  document.getElementById('surname-error').style.display = 'none';
+}
+
+function emailError() {
+  document.getElementById('email-error').style.display = 'none';
+}
+
+function codeError() {
+  document.getElementById('code-error').style.display = 'none';
+}
+
 document.getElementById('verificationCode').addEventListener('input', function(event) {
   const input = event.target;
   let value = input.value.replace(/[^0-9]/g, '');
@@ -20,6 +36,37 @@ document.getElementById("form").addEventListener("submit", function (event) {
   const header = document.querySelector(".header");
   const message = document.querySelector(".message");
   var success_message = document.querySelector(".message.hidden");
+
+  var hasError = false;
+
+  if (name.trim() === '') {
+    document.getElementById('name-error').style.display = 'block';
+    hasError = true;
+  } else {
+    document.getElementById('name-error').style.display = 'none';
+  }
+
+  if (surname.trim() === '') {
+    document.getElementById('surname-error').style.display = 'block';
+    hasError = true;
+  } else {
+    document.getElementById('surname-error').style.display = 'none';
+  }
+
+  if (email.trim() === '') {
+    document.getElementById('email-error').style.display = 'block';
+    hasError = true;
+  } else {
+    document.getElementById('email-error').style.display = 'none';
+  }
+
+  if (name.trim() !== '' && surname.trim() !== '' && icp.trim() !== '' && email.trim() !== '') {
+    hasError = false; 
+  }
+
+  if (hasError) {
+    return;
+  }
 
   var xhr = new XMLHttpRequest();
   xhr.open("POST", "/email/send_email", true);
@@ -57,6 +104,20 @@ document.getElementById("form-verify").addEventListener("submit", function (even
   event.preventDefault();
 
   var verificationCode = document.getElementById("verificationCode").value;
+
+  var hasError = false;
+
+  if (verificationCode.trim() === '') {
+    document.getElementById('code-error').style.display = 'block';
+    hasError = true;
+  } else {
+    document.getElementById('code-error').style.display = 'none';
+    hasError = false;
+  }
+
+  if (hasError) {
+    return;
+  }
 
   var xhr = new XMLHttpRequest();
   xhr.open("POST", "/email/verify", true);
